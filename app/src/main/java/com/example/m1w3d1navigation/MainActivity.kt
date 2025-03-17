@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,12 +53,18 @@ class MainActivity : ComponentActivity() {
                     startDestination = ScreenA
                 ){
                     composable<ScreenA>{
-                        Screen_A(navCtrl)
+//                        val args = it.toRoute<ScreenA>()
+                        Screen_A(screenTitle = "ScreenA", navCtrl)
                     }
 
                     composable<ScreenB>{
                         val args = it.toRoute<ScreenB>()
                         Screen_B(args.title,navCtrl)
+                    }
+
+                    composable<ScreenC>{
+                        val args = it.toRoute<ScreenC>()
+                        Screen_C(screenTitle = args.title, navCtrl = navCtrl)
                     }
                 }
             }
@@ -70,15 +77,19 @@ class MainActivity : ComponentActivity() {
 @Serializable
 object ScreenA
 
-
 @Serializable
 data class ScreenB(
     val title: String
 )
 
+@Serializable
+data class ScreenC(
+    val title: String
+)
+
 @Composable
-fun Screen_A(navCtrl: NavHostController) {
-    Header(screenTitle = "Screen A")
+fun Screen_A(screenTitle:String, navCtrl: NavHostController) {
+    Header(screenTitle = screenTitle)
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -86,7 +97,7 @@ fun Screen_A(navCtrl: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Welcome to the first Screen!",
+            text = "Welcome to the $screenTitle!",
             modifier = Modifier
                 .background(androidx.compose.ui.graphics.Color.Cyan),
             textAlign = TextAlign.Center,
@@ -96,8 +107,9 @@ fun Screen_A(navCtrl: NavHostController) {
         Spacer(Modifier.height(32.dp))
 
         Button(
-            onClick = { navCtrl.navigate(ScreenB(title = "Screen B"))
-        }
+            onClick = {
+                navCtrl.navigate(ScreenB(title = "Screen B"))
+            }
         ) {
             Text(
                 text = "Click to visit B!",
@@ -106,10 +118,8 @@ fun Screen_A(navCtrl: NavHostController) {
                 fontSize = 23.sp,
                 color = Color.White
             )
-
         }
     }
-
 }
 
 @Composable
@@ -122,7 +132,7 @@ fun Screen_B(screenTitle: String, navCtrl: NavHostController){
         verticalArrangement = Arrangement.Center
         ) {
         Text(
-            text = "Hi,\nWelcome to the Second Screen!",
+            text = "Hi,\nWelcome to the $screenTitle!",
             modifier = Modifier
                 .background(androidx.compose.ui.graphics.Color.Cyan),
             textAlign = TextAlign.Center,
@@ -130,6 +140,37 @@ fun Screen_B(screenTitle: String, navCtrl: NavHostController){
         )
 
     Spacer(Modifier.height(32.dp))
+
+        Button(
+            onClick={navCtrl.navigate(route = ScreenC(title = "Screen C"))}
+        ){
+            Text(
+                text = "Click to visit C!",
+                fontSize = 23.sp,
+                color = Color.White,
+            )
+        }
+    }
+}
+
+@Composable
+fun Screen_C(screenTitle: String, navCtrl: NavHostController){
+    Header(screenTitle=screenTitle)
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Hi,\nWelcome to the $screenTitle!",
+            modifier = Modifier
+                .background(Color.Cyan),
+            textAlign = TextAlign.Center,
+            fontSize = 23.sp,
+        )
+
+        Spacer(Modifier.height(32.dp))
 
         Button(
             onClick={navCtrl.navigate(ScreenA)}
@@ -158,8 +199,13 @@ fun Header(modifier: Modifier = Modifier,
             )
         },
         navigationIcon = {
+            var headerNavIcon = Icons.Filled.KeyboardArrowLeft
+
+            if (screenTitle == "ScreenA")
+                headerNavIcon = Icons.Filled.Menu
+
             Icon(
-                imageVector = Icons.Filled.Menu,
+                imageVector = headerNavIcon,
                 contentDescription = "nav icon",
                 modifier = Modifier
                     .width(30.dp)
@@ -178,6 +224,12 @@ fun Header(modifier: Modifier = Modifier,
 
         },
     )
+}
+
+
+@Composable
+fun myBtmBar(){
+
 }
 
 
