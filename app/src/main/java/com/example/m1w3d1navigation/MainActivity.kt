@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,18 +18,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         Screen_C(screenTitle = args.title, navCtrl = navCtrl)
                     }
                 }
+
             }
         }
     }
@@ -120,6 +128,8 @@ fun Screen_A(screenTitle:String, navCtrl: NavHostController) {
             )
         }
     }
+    //when I uncomment this line I loes all the screen content but the bottom par!!
+//    myBtmBar(screenTitle = screenTitle, modifier = Modifier.padding(0.dp), navCtrl = navCtrl)
 }
 
 @Composable
@@ -185,9 +195,7 @@ fun Screen_C(screenTitle: String, navCtrl: NavHostController){
 }
 
 @Composable
-fun Header(modifier: Modifier = Modifier,
-           screenTitle: String
-           ){
+fun Header(modifier: Modifier = Modifier, screenTitle: String){
     TopAppBar(
         modifier = modifier
             .padding(16.dp)
@@ -200,6 +208,7 @@ fun Header(modifier: Modifier = Modifier,
         },
         navigationIcon = {
             var headerNavIcon = Icons.Filled.KeyboardArrowLeft
+
 
             if (screenTitle == "ScreenA")
                 headerNavIcon = Icons.Filled.Menu
@@ -226,13 +235,43 @@ fun Header(modifier: Modifier = Modifier,
     )
 }
 
-
 @Composable
-fun myBtmBar(){
+fun myBtmBar(modifier: Modifier=Modifier, screenTitle: String, navCtrl: NavHostController) {
+// a good tutorial for bottom bar navigation: https://www.youtube.com/watch?v=O9csfKW3dZ4
+    val navItemList = listOf(
+        navItem("Back", Icons.Filled.KeyboardArrowLeft),
+        navItem("", Icons.Filled.Home),
+        navItem("Next", Icons.Filled.KeyboardArrowRight),
+    )
+    Scaffold(
+//        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            NavigationBar {
+                navItemList.forEachIndexed { index, navItem ->
+                    NavigationBarItem(
+                        selected = true,
+                        onClick = {},
+                        icon = {
+                            Icon(imageVector = navItem.icon, contentDescription = "bottom icon")
+                        },
+                        label = {
+                            Text(text = navItem.label)
+                        }
+                    )
+                }
+            }
+        }
+    ){  innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+        }
 
+    }
 }
 
-
+data class navItem(
+    val label: String,
+    val icon : ImageVector
+)
 
 
 
